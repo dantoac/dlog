@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+.created_on {
+    background:#fff;
+    border:1px solid #ccc;
+    border-radius:.6em;
+    padding:0 .5em;
+    margin-right:.5em;
+}
+
+#post_list {font-variant:small-caps;}
+
+#post_list a:hover {
+    color:#00f;
+}
+
+#paginar {margin:1em;padding:1em;}
+
+.post_title {
+    font:bold 2em sans-serif;
+}
+

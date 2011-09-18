@@ -1,0 +1,35 @@
+{{right_sidebar_enabled=True}}
+{{extend 'plantilla.html'}}
+
+{{#http://ompldr.org/vYWJhOA/identica16x16.png}}
+<script type="text/javascript">
+function actualiza_bloque() {
+web2py_component('{{=URL(c='widget',f='microblog.load', args='amigostl')}}','amigostl');
+setTimeout(actualiza_bloque,60000);
+}
+jQuery(document).ready(actualiza_bloque);
+</script>
+
+
+{{block right_sidebar}}
+<div id="identica">
+  {{=LOAD(c='widget',f='microblog.load',args='amigostl',target='amigostl',ajax=False,content='http://identi.ca/danto/all')}}
+  {{=LOAD(c='widget',f='microblog.load',target='dantotl',ajax=False,content='http://identi.ca/danto')}}
+</div>
+{{end}}
+
+{{ if auth.is_logged_in():}}
+{{=A('Postear',_href=URL(c='content',f='post'),_class='button primary pill')}}
+{{=A('Admin',_href=URL(c='plugin_instant_admin'),_class='negative button pill')}}
+{{pass}}
+{{=LOAD(c='widget',f='postlist.load',args=request.args,ajax=False,target='post_list')}}
+
+<div id="post">
+
+  <p />Ésta es la bitácora pública de Daniel Aguayo, <abbr title="also known as">a.k.a.</abbr> <em>Danto</em> o <em>Danthux</em>. 
+  <p />Construí este blog usando el framework <a href="http://web2py.com/">web2py</a> sólo por diversión y mantuve el layout de la plantilla de andamiaje a propósito de mantener el minimalismo en el diseño.
+  <p />Iré (re)publicando artículos de diferentes temas aquí, aunque probablemente predominen los de tópico tecnológico. 
+  <p /> Puedes <a href="https://identi.ca/index.php?action=newnotice&status_textarea=ea @danto,estoy en tu blog y">contactarme en Identi.ca</a>.
+  <p />Puedes navegar entre las publicaciones usando el menú de arriba.
+  <p /><a href="http://fsf.org/fb"><img alt="not f'd" src="http://static.fsf.org/nosvn/no-facebook-me.png" /></a>
+</div>

@@ -1,0 +1,2 @@
+{{=DIV(post_title,_class='post_title')}}
+{{=post_content}}

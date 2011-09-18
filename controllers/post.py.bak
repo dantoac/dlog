@@ -1,0 +1,10 @@
+# coding: utf8
+# try something like
+
+def index(): return dict(message="hello from post.py")
+
+def new():
+    return dict(form=crud.create(db.post))
+
+def list():
+    return dict()

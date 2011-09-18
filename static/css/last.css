@@ -1,0 +1,110 @@
+@charset "UTF-8";
+
+a,a:visited,a:link {color:#3465a4;} 
+a:hover {color:#204a87;}
+
+#paginar, #paginar a {
+    text-decoration:none;
+    font-weight:bold;
+    text-align:center;
+}
+
+.izq {float:left !important;}
+.der {float:right !important;}
+
+#statusbar {
+    background:#fff !important;
+}
+
+.sf-menu li {
+    background:#eeeeec !important;
+}
+
+#post_list {
+    background:#eeeeec;
+    padding:.5em;
+    margin:.5em;
+    border:1px solid #d3d7cf;
+    border-radius:.6em;
+}
+
+#post_list a {
+    margin:0 .3em;
+    color:#000;
+}
+
+pre {
+    background:#fea;
+    border:1px solid #d3d7cf
+    padding:1em;
+    border-radius:.6em;
+}
+
+.post_body {
+    overflow:hidden;
+    clear:both;
+}
+
+.post_meta {
+    text-align:right;
+    margin:.5em;
+    font-size:.8em;
+    clear:both;
+}
+
+.post_meta li {
+    display:inline;
+}
+
+.meta_link {
+    background:#eeeeec;
+}
+
+ul li {
+    list-style:none;
+}
+#post h1.title, #post h1.title  a{
+    text-align:center;
+    padding:.33em;
+    color:#3465a4;
+    text-decoration:none;  
+}
+
+#right_sidebar .microblog {
+    font:.8em sans-serif;
+    overflow:hidden;
+}
+
+#right_sidebar .microblog #dents li {
+    margin:.5em 0;
+}
+
+.microblog ul {
+    margin:0;
+}
+
+.title {font-weight:bold;}
+
+.microblog{
+    margin-bottom:1em;
+}
+
+#identica .title {
+    background:#a40000 url('http://ompldr.org/vYWI2OQ/identica.png') left no-repeat;
+    text-indent:26px;
+    line-height:24px;
+    height:24px;
+    display:block;
+    border-radius:.6em;
+    color:#fff;
+    text-decoration:none;
+    border:1px solid #c00;
+}
+
+#footer, #footer a, #footer img {
+    font-size:x-small;
+    vertical-align:middle;
+    text-decoration:none;
+}
+
+h1.title {font-size:1.5em;}
