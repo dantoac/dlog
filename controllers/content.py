@@ -59,11 +59,12 @@ def read():
 
 @auth.requires_login()
 def post():
-    if request.args(0) == 'edit' or 'post':
+    if request.args(0) == 'edit' or 'post' and request.args(1):
         pid = int(request.args(1))
+        response.flash = pid
         response.title = 'Editando post'
     else:
-        pid = None
+        pid = ''
         response.title = 'Nuevo post'
 
     form = SQLFORM(db.post,pid,deletable=True)
