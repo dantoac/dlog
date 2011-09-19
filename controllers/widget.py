@@ -11,7 +11,7 @@ def microblog():
     who = request.args(0)
     if who == 'amigostl':
         identica_feed = 'friends_timeline'
-        link2src = A('Timeline Amigos',_href='http://identi.ca/danto/all',_class='title',_title='Timeline público de mi red de contactos')
+        link2src = A('Timeline Contactos',_href='http://identi.ca/danto/all',_class='title',_title='Timeline público de mi red de contactos')
     else:
         identica_feed = 'user_timeline'
         link2src = A('@'+identica_user,_href='http://identi.ca/'+identica_user,_class='title',_title='Mi microblog en identi.ca')
