@@ -1,8 +1,8 @@
 {{extend 'plantilla.html'}}
 
 {{if active or auth.is_logged_in():}}
-<div id="post">
-{{=H1(title,_class='title')}}
+<div id="post" class='ui-widget'>
+{{=title}}
 {{=meta}}
 {{=body}}
 </div>

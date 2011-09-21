@@ -26,7 +26,7 @@ def read():
     if len(post_data)>0:
         for p in post_data:
             response.title = p.title
-            title = XML(A(p.title,_href=URL(c='content',f='read.html',args=[slug,pid])))
+            title = H1(A(p.title,_href=URL(c='content',f='read.html',args=[slug,pid])),_class='title ui-corner-all')
             date = p.created_on
     
             if p.is_active == False:

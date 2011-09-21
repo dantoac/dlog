@@ -20,11 +20,11 @@ jQuery(document).ready(actualiza_bloque);
 
 {{ if auth.is_logged_in():}}
 {{=A('Postear',_href=URL(c='content',f='post'),_class='button primary pill')}}
-{{=A('Admin',_href=URL(c='plugin_instant_admin'),_class='negative button pill')}}
+{{=A('Admin',_href=URL(c='gestor'),_class='negative button pill')}}
 {{pass}}
-{{=LOAD(c='widget',f='postlist.load',args=request.args,ajax=False,target='post_list')}}
+{{=LOAD(c='widget',f='postlist.load',args=request.args,ajax=False,target='post_list',_class='ui-widget-content ui-corner-all')}}
 
-<div id="post">
+<div id="post" class='ui-widget ui-corner-all'>
 
   <p />Ésta es la bitácora pública de Daniel Aguayo, <abbr title="also known as">a.k.a.</abbr> <em>Danto</em> o <em>Danthux</em>. 
   <p />Construí este blog usando el framework <a href="http://web2py.com/">web2py</a> sólo por diversión y mantuve el layout de la plantilla de andamiaje a propósito de mantener el minimalismo en el diseño.

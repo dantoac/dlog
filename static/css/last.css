@@ -21,16 +21,11 @@ a:hover {color:#204a87;}
 }
 
 #post_list {
-    background:#eeeeec;
-    padding:.5em;
     margin:.5em;
-    border:1px solid #d3d7cf;
-    border-radius:.6em;
 }
 
 #post_list a {
     margin:0 .3em;
-    color:#000;
 }
 
 pre {
@@ -43,6 +38,7 @@ pre {
 .post_body {
     overflow:hidden;
     clear:both;
+    padding:1em;
 }
 
 .post_meta {
@@ -65,9 +61,8 @@ ul li {
 }
 #post h1.title, #post h1.title  a{
     text-align:center;
-    padding:.33em;
-    color:#3465a4;
     text-decoration:none;  
+    color:#3465a4;
 }
 
 #right_sidebar .microblog {
@@ -82,8 +77,6 @@ ul li {
 .microblog ul {
     margin:0;
 }
-
-.title {font-weight:bold;}
 
 .microblog{
     margin-bottom:1em;
@@ -107,4 +100,3 @@ ul li {
     text-decoration:none;
 }
 
-h1.title {font-size:1.5em;}

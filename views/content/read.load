@@ -1,4 +1,4 @@
-{{=H1(title,_class='title')}}
+{{=title}}
 {{=meta}}
 {{=body}}
 

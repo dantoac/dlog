@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#@cache(request.env.path_info, time_expire=300, cache_model=cache.ram)
+@cache(request.env.path_info, time_expire=300, cache_model=cache.ram)
 def microblog():
     import gluon.contrib.feedparser as feedparser
     response.files.append(URL('static','css/simplicity20.css'))
@@ -57,47 +57,79 @@ def microblog():
     return dict(microblog=identica)
 
 #@cache(request.env.path_info, time_expire=3600, cache_model=cache.disk)
+@auth.requires(request.cid)
 def postlist():  
-    #response.files.append(URL('static','css/index.css'))
-    items_per_page = 5
 
-    if request.args(0) == 'pag':
-        page = int(request.args(1))
-        #if page == 0:
-        #    redirect(URL(f='index'))
+    #if request.args(0) == 'pag':
+    if request.vars.pag:
+        #page = int(request.args(1))
+        page = int(request.vars.pag)
+
     else:
         page = 0
-        
-
-    limitby = (page*items_per_page,(page+1)*items_per_page+1)
+         
     
-    data = db(
-        (db.post.id>0) & 
-        (db.post.is_active==True) &
-        (db.post.static == False)
-        ).select(
-        db.post.title,
-        db.post.slug,
-        db.post.id,
-        db.post.created_on,
-        orderby=~db.post.created_on,
-        limitby=limitby
-        )
-
+    # chequea si es que el widget es llamado desde el controlador 'gestor'
+    if request.cid == 'gestor':
+        items_per_page = 50
+        limitby = (page*items_per_page,(page+1)*items_per_page+1)
+        data = db(
+            (db.post.id>0)
+            ).select(
+            db.post.title,
+            db.post.slug,
+            db.post.id,
+            db.post.created_on,
+            db.post.static,
+            db.post.is_active,
+            orderby=~db.post.created_on,
+            limitby=limitby
+            )
+    else:
+        items_per_page = 3
+        limitby = (page*items_per_page,(page+1)*items_per_page+1)
+        data = db(
+            (db.post.id>0) & 
+            (db.post.is_active==True) &
+            (db.post.static == False)
+            ).select(
+            db.post.title,
+            db.post.slug,
+            db.post.id,
+            db.post.created_on,
+            orderby=~db.post.created_on,
+            limitby=limitby
+            )
+    
     posts_list = UL()
 
     #paginador
     paginar = DIV(_id='paginar') 
+
     if page:
-        paginar.append(A('<< recientes',_href=URL(r=request,args=['pag',page-1]),cid=request.cid))
+        paginar.append(A('<< recientes',_href=URL(r=request,vars={'pag':page-1}),cid=request.cid))
         paginar.append(' | ')
+
     if len(data)>items_per_page:
-        paginar.append(A('antiguos >>',_href=URL(r=request,args=['pag',page+1]),cid=request.cid))
+        paginar.append(A('antiguos >>',_href=URL(r=request,vars={'pag':page+1}),cid=request.cid))
     #/paginador
 
-    for p in data:
-        posts_list.append(LI(SPAN(p.created_on.date(),_class='created_on'),A(p.title,_href=URL(c='content',f='read.load',args=[p.slug,p.id]),cid='post')))           
+    for n,p in enumerate(data):
+        if n == items_per_page: break
+        posts_list.append(LI(SPAN(p.created_on.date(),_class='created_on'),A(' '+p.title,_href=URL(c='content',f='read.load',args=[p.slug,p.id]),cid='post')))           
 
+
+        # agregamos un botón de 'edición rápida' si es que el usuario está autentificado
+        if auth.is_logged_in():
+            posts_list[-1].append(SPAN(A('editar',_href=URL(c='content',f='post',args=['edit',p.id,p.slug]),cid='post',_class='ui-button ui-icon ui-icon-pencil')))
+
+            # si llamamos al widget desde el controlador 'gestor', agrega links con más opciones:
+            if request.cid == 'gestor':
+                #posts_list[-1].append(SPAN(A('editar',_href=URL(c='content',f='post',args=['edit',p.id,p.slug]),cid='post',_class='ui-button ui-icon ui-icon-pencil')))
+                if p.static:
+                    posts_list[-1].append(SPAN(EM(',static')))
+                if not p.is_active:
+                    posts_list[-1].append(SPAN(EM(',Inactivo')))
 
     return dict(posts_list=posts_list,paginar=paginar)
 
