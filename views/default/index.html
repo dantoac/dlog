@@ -34,7 +34,7 @@ try:
 frontpage = db((db.block.place == db.place.id) &
             (db.block.post == db.post.id) &
             (db.post.is_active == True) &
-            (db.post.title == 'portada') &
+            (db.block.position == 0) &
             (db.place.name == 'blog') 
             ).select(
             db.post.body,

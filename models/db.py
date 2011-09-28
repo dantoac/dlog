@@ -49,7 +49,7 @@ mail.settings.login = 'username:password'
 auth.settings.registration_requires_verification = False
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
-
+auth.settings.login_after_registration = True
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.rpx_account import use_janrain
@@ -88,9 +88,8 @@ table('markup',
       )
 
 
-if db.markup[1] and db.markup[2] == None:
-    db.markup.bulk_insert([{'name':'markmin'}, {'name':'html'}, {'name':'python'}])
-
+#if db.markup[1] and db.markup[2] == None:
+#    db.markup.bulk_insert([{'name':'markmin'}, {'name':'html'}, {'name':'python'}])
 table('post',
       Field('title', 'string', length = 80, label = T('Título')),
       Field('body', 'text', length = 4000, label = T('Cuerpo')),
@@ -147,3 +146,17 @@ table('attach',
 
 
 auth.add_permission(1, 'update', 'post')
+
+if db(db.markup).isempty():
+    db.markup.bulk_insert([{'name':'markmin'},
+                           {'name':'html'}
+                           ])
+
+if db(db.place).isempty():
+    db.place.bulk_insert([{'name':'blogpost'},
+                          {'name':'sidebar'},
+                          {'name':'menu'},
+                          {'name':'página'},
+                          {'name':'documento'}
+                          ])
+
