@@ -1,5 +1,5 @@
 {{right_sidebar_enabled=True}}
-{{extend 'plantilla.html'}}
+{{extend 'layout.html'}}
 
 {{#http://ompldr.org/vYWJhOA/identica16x16.png}}
 <script type="text/javascript">
@@ -10,19 +10,21 @@ setTimeout(actualiza_bloque,60000);
 jQuery(document).ready(actualiza_bloque);
 </script>
 
-
-{{block right_sidebar}}
-<div id="identica">
-  {{=LOAD(c='widget',f='microblog.load',args='amigostl',target='amigostl',ajax=False,content='http://identi.ca/danto/all')}}
-  {{=LOAD(c='widget',f='microblog.load',target='dantotl',ajax=False,content='http://identi.ca/danto')}}
-</div>
+{{block left_sidebar}}
+{{=LOAD(c='widget',f='postlist.load',args=request.args,target='post_list',_class='ui-widget-content ui-corner-all')}}
 {{end}}
 
-{{ if auth.is_logged_in():}}
+
+{{block right_sidebar}}
+{{include 'sidebar.html'}}
+{{end #right_sidebar}}
+
+{{if auth.is_logged_in():}}
 {{=A('Postear',_href=URL(c='content',f='post'),_class='button primary pill')}}
 {{=A('Admin',_href=URL(c='gestor'),_class='negative button pill')}}
 {{pass}}
-{{=LOAD(c='widget',f='postlist.load',args=request.args,ajax=False,target='post_list',_class='ui-widget-content ui-corner-all')}}
+
+{{=LOAD(c='widget',f='postlist.load',args=request.args,target='post_list',_class='ui-widget-content ui-corner-all')}}
 
 <div id="post" class='ui-widget ui-corner-all'>
 

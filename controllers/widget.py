@@ -1,46 +1,46 @@
 # -*- coding: utf-8 -*-
 
-@cache(request.env.path_info, time_expire=300, cache_model=cache.ram)
+@cache(request.env.path_info, time_expire = 300, cache_model = cache.ram)
 def microblog():
     import gluon.contrib.feedparser as feedparser
-    response.files.append(URL('static','css/simplicity20.css'))
+    response.files.append(URL('static', 'css/simplicity20.css'))
 
     identica_user = 'danto'
 
-    limite=0
+    limite = 0
     who = request.args(0)
     if who == 'amigostl':
         identica_feed = 'friends_timeline'
-        link2src = A('Timeline Contactos',_href='http://identi.ca/danto/all',_class='title',_title='Timeline público de mi red de contactos')
+        link2src = A('Timeline Contactos', _href = 'http://identi.ca/danto/all', _class = 'title', _title = 'Timeline público de mi red de contactos')
     else:
         identica_feed = 'user_timeline'
-        link2src = A('@'+identica_user,_href='http://identi.ca/'+identica_user,_class='title',_title='Mi microblog en identi.ca')
-       
-    urlfeed = 'http://identi.ca/api/statuses/%(who)s/%(user)s.rss' % dict(user=identica_user,who=identica_feed)
+        link2src = A('@' + identica_user, _href = 'http://identi.ca/' + identica_user, _class = 'title', _title = 'Mi microblog en identi.ca')
+
+    urlfeed = 'http://identi.ca/api/statuses/%(who)s/%(user)s.rss' % dict(user = identica_user, who = identica_feed)
 
     feed = feedparser.parse(urlfeed)
-    identica = DIV(link2src,_class='microblog')
+    identica = DIV(link2src, _class = 'microblog')
 
-    dents = UL(_id='dents')
+    dents = UL(_id = 'dents')
 
     for dent in feed.entries:
-        if limite==5:
+        if limite == 5:
             break
         else:
-            limite=limite+1
+            limite = limite + 1
         if who:
             try:
                 #autor = XML(B(str(dent.title).split(':')[0]))
-                autor = dent.title.split(':')[0]+': '
-                dents.append(LI(B(autor),XML(dent.description)))
+                autor = dent.title.split(':')[0] + ': '
+                dents.append(LI(B(autor), XML(dent.description)))
             except:
                 who = None
-                
+
                 #redirect(URL(f='microblog'))
         else:
             dents.append(LI(XML(dent.description)))
-        
-    identica.insert(len(identica),dents)
+
+    identica.insert(len(identica), dents)
     '''
     import urllib2
     #import re
@@ -54,84 +54,74 @@ def microblog():
     for dent in meta.elements('content',_type='html'):
         dents.append(LI(XML(str(dent).replace('&lt;','<').replace('&gt;','>'))))
     '''
-    return dict(microblog=identica)
+    return dict(microblog = identica)
 
 #@cache(request.env.path_info, time_expire=3600, cache_model=cache.disk)
-@auth.requires(request.cid)
-def postlist():  
+#@auth.requires(request.cid)
+def postlist():
+    if request.cid:
+        #if request.args(0) == 'pag':
+        if request.vars.pag:
+            #page = int(request.args(1))
+            page = int(request.vars.pag)
 
-    #if request.args(0) == 'pag':
-    if request.vars.pag:
-        #page = int(request.args(1))
-        page = int(request.vars.pag)
+        else:
+            page = 0
 
-    else:
-        page = 0
-         
-    
-    # chequea si es que el widget es llamado desde el controlador 'gestor'
-    if request.cid == 'gestor':
-        items_per_page = 50
-        limitby = (page*items_per_page,(page+1)*items_per_page+1)
-        data = db(
-            (db.post.id>0)
-            ).select(
-            db.post.title,
-            db.post.slug,
-            db.post.id,
-            db.post.created_on,
-            db.post.static,
-            db.post.is_active,
-            orderby=~db.post.created_on,
-            limitby=limitby
-            )
-    else:
+
+        # chequea si es que el widget es llamado desde el controlador 'gestor'
         items_per_page = 3
-        limitby = (page*items_per_page,(page+1)*items_per_page+1)
+        limitby = (page * items_per_page, (page + 1) * items_per_page + 1)
+
+
+        #'''
         data = db(
-            (db.post.id>0) & 
-            (db.post.is_active==True) &
-            (db.post.static == False)
+            (db.block.place == db.place.id) &
+            (db.block.post == db.post.id) &
+            (db.place.name == 'blog')
             ).select(
             db.post.title,
             db.post.slug,
             db.post.id,
             db.post.created_on,
-            orderby=~db.post.created_on,
-            limitby=limitby
+            orderby = ~db.block.position or db.post.created_on,
+            limitby = limitby
             )
-    
-    posts_list = UL()
+        #'''
+        posts_list = UL()
 
-    #paginador
-    paginar = DIV(_id='paginar') 
-
-    if page:
-        paginar.append(A('<< recientes',_href=URL(r=request,vars={'pag':page-1}),cid=request.cid))
-        paginar.append(' | ')
-
-    if len(data)>items_per_page:
-        paginar.append(A('antiguos >>',_href=URL(r=request,vars={'pag':page+1}),cid=request.cid))
-    #/paginador
-
-    for n,p in enumerate(data):
-        if n == items_per_page: break
-        posts_list.append(LI(SPAN(p.created_on.date(),_class='created_on'),A(' '+p.title,_href=URL(c='content',f='read.load',args=[p.slug,p.id]),cid='post')))           
+        #paginador
+        paginar = DIV(_id = 'paginar')
 
 
-        # agregamos un botón de 'edición rápida' si es que el usuario está autentificado
-        if auth.is_logged_in():
-            posts_list[-1].append(SPAN(A('editar',_href=URL(c='content',f='post',args=['edit',p.id,p.slug]),cid='post',_class='ui-button ui-icon ui-icon-pencil')))
+        if page:
+            paginar.append(A('<< recientes', _href = URL(r = request, vars = {'pag':page - 1}), cid = request.cid))
+            paginar.append(' | ')
 
-            # si llamamos al widget desde el controlador 'gestor', agrega links con más opciones:
-            if request.cid == 'gestor':
-                #posts_list[-1].append(SPAN(A('editar',_href=URL(c='content',f='post',args=['edit',p.id,p.slug]),cid='post',_class='ui-button ui-icon ui-icon-pencil')))
-                if p.static:
-                    posts_list[-1].append(SPAN(EM(',static')))
-                if not p.is_active:
-                    posts_list[-1].append(SPAN(EM(',Inactivo')))
+        if len(data) > items_per_page:
+            paginar.append(A('antiguos >>', _href = URL(r = request, vars = {'pag':page + 1}), cid = request.cid))
+        #/paginador
 
-    return dict(posts_list=posts_list,paginar=paginar)
+        for n, p in enumerate(data):
+            if n == items_per_page: break
+            posts_list.append(LI(SPAN(p.created_on.date(), _class = 'created_on'), A(' ' + p.title, _href = URL(c = 'content', f = 'read.load', args = [p.slug, p.id]), cid = 'post')))
+
+
+            # agregamos un botón de 'edición rápida' si es que el usuario está autentificado
+            if auth.is_logged_in():
+                posts_list[-1].append(SPAN(A('editar', _href = URL(c = 'content', f = 'post', args = ['edit', p.id, p.slug]), cid = 'post', _class = 'ui-button ui-icon ui-icon-pencil')))
+
+                # si llamamos al widget desde el controlador 'gestor', agrega links con más opciones:
+                if request.cid == 'gestor':
+                    #posts_list[-1].append(SPAN(A('editar',_href=URL(c='content',f='post',args=['edit',p.id,p.slug]),cid='post',_class='ui-button ui-icon ui-icon-pencil')))
+                    #if p.static:
+                    #    posts_list[-1].append(SPAN(EM(',static')))
+                    if not p.is_active:
+                        posts_list[-1].append(SPAN(EM(',Inactivo')))
+
+        return dict(posts_list = posts_list, paginar = paginar)
+
+
 
 
 ### UPLOADER
@@ -172,18 +162,18 @@ def uploader():
                     });
 
                 </script>
-                """ % dict(extensiones_permitidas=EXTENSIONES_PERMITIDAS.split('|'),uploader_url=URL(c='widget',f='upload'))
-    return dict(uploader=XML(uploader))
+                """ % dict(extensiones_permitidas = EXTENSIONES_PERMITIDAS.split('|'), uploader_url = URL(c = 'widget', f = 'upload'))
+    return dict(uploader = XML(uploader))
 
 
 def upload():
     if request.vars:
-        afile=request.vars.qqfile
+        afile = request.vars.qqfile
 
-        db.attach.insert(file=db.attachment.file.store(request.body,afile),name=afile)
+        db.attach.insert(file = db.attachment.file.store(request.body, afile), name = afile)
         return response.json({'success':'true'})
     else:
-        return redirect(URL('default','index'))
+        return redirect(URL('default', 'index'))
 
     #"""
     """
@@ -200,3 +190,17 @@ def upload():
         
     return dict(upload=form)
     """
+
+
+def admin():
+    try:
+        form = SQLFORM.smartgrid(db[request.args(0) or 'post'])
+    except:
+        form = ''
+    return dict(form = form)
+
+
+def posts():
+    query = (db.post.id > 0) #& (db.post.is_active==True) & (db.post.static==True)
+    form = SQLFORM.grid(query, headers = {'post.id':'pid', 'post.title':'Título', 'post.is_active':'Activo', 'post.static':'Pág. Estática'}, columns = ['post.id', 'post.title', 'post.static', 'post.is_active'])
+    return dict(form = form)

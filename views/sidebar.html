@@ -1,0 +1,26 @@
+{{=LOAD(c='widget',f='microblog.load',args='amigostl',target='amigostl',ajax=False,content='http://identi.ca/danto/all',_class='block identica')}}
+{{=LOAD(c='widget',f='microblog.load',target='dantotl',ajax=False,content='http://identi.ca/danto',_class='block identica')}}
+
+{{
+    data = db(
+            (db.block.place == db.place.id) &
+            (db.block.post == db.post.id) &
+            (db.place.name == 'sidebar')
+            ).select(
+            db.post.title,
+            db.post.body,
+            db.post.slug,
+            db.post.id,
+            db.post.markup,
+            db.post.created_on,
+            orderby = db.block.position or db.post.created_on,
+            )
+}}
+
+{{for d in data:}}
+{{if d.markup=='markmin':}}
+{{=DIV(MARKMIN(d.title),DIV(MARKMIN(d.body)))}}
+{{else:}}
+{{=DIV(XML(d.title),DIV(XML(d.body)))}}
+{{pass}}
+{{pass}}

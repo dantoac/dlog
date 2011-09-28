@@ -21,13 +21,13 @@ a:hover {color:#204a87;}
 }
 
 #post_list {
-    margin:.5em;
+    margin:.5em auto;
 }
-
+/*
 #post_list a {
     margin:0 .3em;
 }
-
+*/
 pre {
     background:#fea;
     border:1px solid #d3d7cf
@@ -82,7 +82,7 @@ ul li {
     margin-bottom:1em;
 }
 
-#identica .title {
+.identica .title {
     background:#a40000 url('http://ompldr.org/vYWI2OQ/identica.png') left no-repeat;
     text-indent:26px;
     line-height:24px;
@@ -100,3 +100,8 @@ ul li {
     text-decoration:none;
 }
 
+/*#right_sidebar {width:140px !important;}*/
+
+.post_body img {
+    max-width:100%;
+}

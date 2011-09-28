@@ -21,7 +21,7 @@ response.meta.copyright = 'Copyright 2007-2010'
 ##########################################
 
 response.menu = [
-    (T('Home'), False, URL('default','index'), []),
+    (T('Home'), False, URL('default', 'index'), []),
     ]
 
 ##########################################
@@ -124,10 +124,26 @@ response.menu+=[(T('Resources'), False, None,
         ]),
     ]
    )]
+
 """
+# documentos
+data = db((db.post.id == db.block.post) & (db.block.place == db.place.id) & (db.post.is_active == True) & (db.place.name == 'documento')).select(db.post.id, db.post.title, db.block.position, orderby = db.block.position)
+meta_menudocumentos = []
 
-data = db((db.post.static == True) & (db.post.is_active == True)).select(db.post.id,db.post.title,db.post.slug)
+for d in data:
+    meta = (d.post.title, None, URL(c = 'content', f = 'read.html', args = [d.post.title, d.post.id]))
+    meta_menudocumentos.append(meta)
 
-if len(data)>0:
-    for d in data:
-        response.menu.append([d.title,None,URL(c='content',f='read.html',args=[d.slug,d.id])])
+menudocumentos = [(T('Documentos'), False, None, meta_menudocumentos)]
+response.menu += menudocumentos
+
+#páginas
+data = db((db.post.id == db.block.post) & (db.block.place == db.place.id) & (db.post.is_active == True) & (db.place.name == 'página')).select(db.post.id, db.post.title, db.block.position, orderby = db.block.position)
+meta_menudocumentos = []
+
+for d in data:
+    menupaginas = [(d.post.title, None, URL(c = 'content', f = 'read.html', args = [d.post.title, d.post.id]))]
+    #menupaginas.sort()
+    response.menu += menupaginas
+
+

@@ -12,15 +12,16 @@
 #def index():
 #    return dict()
 
-response.files.append(URL('static','css/last.css'))
+
 
 def index():
+    response.files.insert(len(response.files), URL('static', 'css/last.css'))
 
-    
+    #data = db((db.post.is_active == True)).select(db.post.id, db.post.title, db.post.slug)
     return dict()
 
 def user():
-    
+
     """
     exposes:
       http://..../[app]/default/user/login
@@ -34,7 +35,7 @@ def user():
         @auth.requires_permission('read','table name',record_id)
     to decorate functions that need access control
     """
-    return dict(form=auth())
+    return dict(form = auth())
 
 
 def download():
@@ -42,7 +43,7 @@ def download():
     allows downloading of uploaded files
     http://..../[app]/default/download/[filename]
     """
-    return response.download(request,db)
+    return response.download(request, db)
 
 
 def call():
@@ -70,5 +71,5 @@ def data():
     or with the signed load operator
       LOAD('default','data.load',args='tables',ajax=True,user_signature=True)
     """
-    return dict(form=crud())
+    return dict(form = crud())
 
