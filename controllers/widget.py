@@ -79,7 +79,8 @@ def postlist():
             (db.block.place == db.place.id) &
             (db.block.post == db.post.id) &
             (db.post.is_active == True) &
-            (db.place.name == 'blog')
+            (db.place.name == 'blog') &
+            (db.post.title != 'portada')
             ).select(
             db.post.title,
             db.post.slug,

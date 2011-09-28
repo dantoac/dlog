@@ -28,10 +28,27 @@ jQuery(document).ready(actualiza_bloque);
 
 <div id="post" class='ui-widget ui-corner-all'>
 
-  <p />Ésta es la bitácora pública de Daniel Aguayo, <abbr title="also known as">a.k.a.</abbr> <em>Danto</em> o <em>Danthux</em>. 
-  <p />Construí este blog usando el framework <a href="http://web2py.com/">web2py</a> sólo por diversión y mantuve el layout de la plantilla de andamiaje a propósito de mantener el minimalismo en el diseño.
-  <p />Iré (re)publicando artículos de diferentes temas aquí, aunque probablemente predominen los de tópico tecnológico. 
-  <p /> Puedes <a href="https://identi.ca/index.php?action=newnotice&status_textarea=ea @danto,estoy en tu blog y">contactarme en Identi.ca</a>.
-  <p />Puedes navegar entre las publicaciones usando el menú de arriba.
-  <p /><a href="http://fsf.org/fb"><img alt="not f'd" src="http://static.fsf.org/nosvn/no-facebook-me.png" /></a>
+
+{{
+try:
+frontpage = db((db.block.place == db.place.id) &
+            (db.block.post == db.post.id) &
+            (db.post.is_active == True) &
+            (db.post.title == 'portada') &
+            (db.place.name == 'blog') 
+            ).select(
+            db.post.body,
+            db.post.markup,
+            orderby =~ db.post.modified_on
+            ).first()
+}}
+
+{{if frontpage['markup'].name == 'html':}}
+{{=XML(frontpage['body'])}}
+{{else:}}
+{{=MARKMIN(frontpage['body'])}}
+{{pass}}
+
+{{except:pass}}
+
 </div>
