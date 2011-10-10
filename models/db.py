@@ -105,10 +105,10 @@ db.post.xurl.requires = IS_URL()
 db.post.is_active.default = False
 db.post.markup.default = 1
 
-table('block',
+table('context',
       Field('post', 'reference post'),
       Field('place', 'reference place'),
-      Field('position', 'integer')
+      Field('priority', 'integer',default=1,comment = T('Un post tipo "blogpost" con prioridad 0 lo estableces como "frontpage"'))
       )
 
 """
@@ -122,30 +122,7 @@ query_block_content = db((db.post.id>0) & (db.post.is_active == True) & (db.post
 db.block_content.content.requires=IS_IN_DB(query_block_content,'post.id','%(title)s')
 """
 
-"""
-table('tag',
-      Field('name','string'),
-      Field('super', 'reference tag'),
-      format='%(name)s'
-      )
-
-db.tag.name.requires = IS_NOT_IN_DB(db,db.tag.name)
-
-table('tagged',
-      Field('post','reference post'),
-      Field('tag','reference tag')
-      )
-
-table('attach',
-      Field('name','string'),
-      Field('file','upload'),
-      auth.signature,
-      format='%(name)s'
-      )
-"""
-
-
-auth.add_permission(1, 'update', 'post')
+auth.add_permission(1, 'delete', 'post')
 
 if db(db.markup).isempty():
     db.markup.bulk_insert([{'name':'markmin'},
@@ -160,3 +137,8 @@ if db(db.place).isempty():
                           {'name':'documento'}
                           ])
 
+
+
+if request.is_local:
+    from gluon.custom_import import track_changes
+    track_changes()

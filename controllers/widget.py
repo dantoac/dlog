@@ -1,126 +1,75 @@
 # -*- coding: utf-8 -*-
 
-@cache(request.env.path_info, time_expire = 300, cache_model = cache.ram)
-def microblog():
-    import gluon.contrib.feedparser as feedparser
-    response.files.append(URL('static', 'css/simplicity20.css'))
+@cache(request.env.path_info, time_expire = 200, cache_model = cache.ram)
+def identica():
 
-    identica_user = 'danto'
+    from floscial import Floscial
+    user = 'danto'
+    identica_contactos = Floscial(user,'friends',3).identica()
+    identica_personal = Floscial(user,'user',3).identica()
 
-    limite = 0
-    who = request.args(0)
-    if who == 'amigostl':
-        identica_feed = 'friends_timeline'
-        link2src = A('Timeline Contactos', _href = 'http://identi.ca/danto/all', _class = 'title', _title = 'Timeline público de mi red de contactos')
-    else:
-        identica_feed = 'user_timeline'
-        link2src = A('@' + identica_user, _href = 'http://identi.ca/' + identica_user, _class = 'title', _title = 'Mi microblog en identi.ca')
+    d =  dict(friends = identica_contactos, personal = identica_personal)
+    return response.render(d)
 
-    urlfeed = 'http://identi.ca/api/statuses/%(who)s/%(user)s.rss' % dict(user = identica_user, who = identica_feed)
 
-    feed = feedparser.parse(urlfeed)
-    identica = DIV(link2src, _class = 'microblog')
-
-    dents = UL(_id = 'dents')
-
-    for dent in feed.entries:
-        if limite == 5:
-            break
-        else:
-            limite = limite + 1
-        if who:
-            try:
-                #autor = XML(B(str(dent.title).split(':')[0]))
-                autor = dent.title.split(':')[0] + ': '
-                dents.append(LI(B(autor), XML(dent.description)))
-            except:
-                who = None
-
-                #redirect(URL(f='microblog'))
-        else:
-            dents.append(LI(XML(dent.description)))
-
-    identica.insert(len(identica), dents)
-    '''
-    import urllib2
-    #import re
-
-    u = urllib2.urlopen(atom).read()
-
-    meta = TAG(u)
-
-    dents = UL()
-
-    for dent in meta.elements('content',_type='html'):
-        dents.append(LI(XML(str(dent).replace('&lt;','<').replace('&gt;','>'))))
-    '''
-    return dict(microblog = identica)
-
-#@cache(request.env.path_info, time_expire=3600, cache_model=cache.disk)
-#@auth.requires(request.cid)
+#@cache(request.env.path_info, time_expire=3600, cache_model=cache.ram)
 def postlist():
-    if request.cid:
-        #if request.args(0) == 'pag':
-        if request.vars.pag:
-            #page = int(request.args(1))
-            page = int(request.vars.pag)
+    #chk que sea una llamada ajax
+    if request.cid: #
 
+        if request.vars.pag:
+            page = int(request.vars.pag)
         else:
             page = 0
 
 
-        # chequea si es que el widget es llamado desde el controlador 'gestor'
         items_per_page = 3
         limitby = (page * items_per_page, (page + 1) * items_per_page + 1)
 
-
-        #'''
         data = db(
-            (db.block.place == db.place.id) &
-            (db.block.post == db.post.id) &
+            (db.context.place == db.place.id) &
+            (db.context.post == db.post.id) &
             (db.post.is_active == True) &
-            (db.place.name == 'blog') &
-            (db.block.position != 0)
+            (db.place.name == 'blogpost') &
+            (db.context.priority > 0)
             ).select(
             db.post.title,
             db.post.slug,
             db.post.id,
             db.post.created_on,
-            orderby = ~db.block.position or db.post.created_on,
+            db.post.modified_on,
+            orderby =~ db.post.created_on,
             limitby = limitby
             )
-        #'''
+
         posts_list = UL()
 
         #paginador
         paginar = DIV(_id = 'paginar')
 
-
         if page:
-            paginar.append(A('<< recientes', _href = URL(r = request, vars = {'pag':page - 1}), cid = request.cid))
+            paginar.append(A('← recientes', _href = URL(r = request, vars = {'pag':page - 1}), cid = request.cid))
             paginar.append(' | ')
 
         if len(data) > items_per_page:
-            paginar.append(A('antiguos >>', _href = URL(r = request, vars = {'pag':page + 1}), cid = request.cid))
+            paginar.append(A('antiguos →', _href = URL(r = request, vars = {'pag':page + 1}), cid = request.cid))
         #/paginador
 
+
+        #
         for n, p in enumerate(data):
             if n == items_per_page: break
-            posts_list.append(LI(SPAN(p.created_on.date(), _class = 'created_on'), A(' ' + p.title, _href = URL(c = 'content', f = 'read.load', args = [p.slug, p.id]), cid = 'post')))
-
+            posts_list.append(LI(SPAN(p.created_on.date(), _class = 'created_on'), A(' ' + p.title, _href = URL(c = 'post', f = 'read.load', args = [p.id, p.slug]), cid = 'post')))
 
             # agregamos un botón de 'edición rápida' si es que el usuario está autentificado
             if auth.is_logged_in():
-                posts_list[-1].append(SPAN(A('editar', _href = URL(c = 'content', f = 'post', args = ['edit', p.id, p.slug]), cid = 'post', _class = 'ui-button ui-icon ui-icon-pencil')))
+                posts_list[-1].append(SPAN(A('editar', _href= URL(c = 'gestor', f = 'index.html', args = ['post','edit','post',p.id], user_signature=True), _class = 'ui-button ui-icon ui-icon-pencil')))
 
-                # si llamamos al widget desde el controlador 'gestor', agrega links con más opciones:
-                if request.cid == 'gestor':
-                    #posts_list[-1].append(SPAN(A('editar',_href=URL(c='content',f='post',args=['edit',p.id,p.slug]),cid='post',_class='ui-button ui-icon ui-icon-pencil')))
-                    #if p.static:
-                    #    posts_list[-1].append(SPAN(EM(',static')))
-                    if not p.is_active:
-                        posts_list[-1].append(SPAN(EM(',Inactivo')))
+            if p.modified_on != p.created_on:
+                posts_list[-1].append(SPAN(EM(' actualizado: %s' % p.modified_on.date()),_class='updated green_light_bg'))
 
+        posts_list.insert(0,DIV(TAG.STRONG('Publicaciones'),_class='title'))
+               
         return dict(posts_list = posts_list, paginar = paginar)
 
 

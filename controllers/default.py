@@ -9,16 +9,18 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
-#def index():
-#    return dict()
+response.files.insert(len(response.files), URL('static', 'css/last.css'))
+
+from menucontext import MenuContext
+menuadds = MenuContext(db)
+response.menu += menuadds.menudocs()
+response.menu += menuadds.menupags()
 
 
-
-def index():
-    response.files.insert(len(response.files), URL('static', 'css/last.css'))
-
-    #data = db((db.post.is_active == True)).select(db.post.id, db.post.title, db.post.slug)
+def index():   
     return dict()
+
+
 
 def user():
 

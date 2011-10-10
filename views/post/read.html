@@ -1,0 +1,12 @@
+{{extend 'layout.html'}}
+
+{{if active or auth.is_logged_in():}}
+<div id="post" class='ui-widget'>
+{{=title}}
+{{=meta}}
+{{=body}}
+</div>
+{{else:}}
+{{response.flash = 'Este post está temporalmente desactivado'}}
+Vuelve en otro momento.
+{{pass}}

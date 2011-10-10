@@ -1,10 +1,15 @@
-{{=LOAD(c='widget',f='microblog.load',args='amigostl',target='amigostl',ajax=False,content='http://identi.ca/danto/all',_class='block identica')}}
-{{=LOAD(c='widget',f='microblog.load',target='dantotl',ajax=False,content='http://identi.ca/danto',_class='block identica')}}
+<script type="text/javascript">
+function actualiza_bloque() {
+web2py_component('{{=URL(c='widget',f='identica.load')}}','widget_identica');
+setTimeout(actualiza_bloque,60000);
+}
+jQuery(document).ready(actualiza_bloque);
+</script>
 
 {{
     data = db(
-            (db.block.place == db.place.id) &
-            (db.block.post == db.post.id) &
+            (db.context.place == db.place.id) &
+            (db.context.post == db.post.id) &
             (db.place.name == 'sidebar')
             ).select(
             db.post.title,
@@ -13,14 +18,26 @@
             db.post.id,
             db.post.markup,
             db.post.created_on,
-            orderby = db.block.position or db.post.created_on,
+            orderby = db.context.priority
             )
 }}
 
+
+{{=LOAD(c='widget',f='identica.load', ajax=True, content=A('identi.ca/danto...',_href='http://identi.ca/danto'),_class='block identica',target='widget_identica')}}
+
+
 {{for d in data:}}
-{{if d.markup=='markmin':}}
-{{=DIV(MARKMIN(d.title),DIV(MARKMIN(d.body)))}}
-{{else:}}
-{{=DIV(XML(d.title),DIV(XML(d.body)))}}
+
+    {{if d.markup.name == 'html':}}
+        {{=DIV(DIV(XML(d.title),_class='title'),DIV(XML(d.body),_class='body'),_class='block')}}
+
+    {{elif d.markup.name == 'template':}}
+        {{import gluon.template}}
+        {{=DIV(DIV(XML(d.title),_class='title'),DIV(XML(gluon.template.render(d.body,context=globals())),_class='body'),_class='block')}}
+
+    {{else:}}
+        {{=DIV(DIV(MARKMIN(d.title),_class='title'),DIV(MARKMIN(d.body),_class='body'),_class='block')}}
+
+    {{pass}}
 {{pass}}
 {{pass}}

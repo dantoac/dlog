@@ -2,13 +2,6 @@
 {{extend 'layout.html'}}
 
 {{#http://ompldr.org/vYWJhOA/identica16x16.png}}
-<script type="text/javascript">
-function actualiza_bloque() {
-web2py_component('{{=URL(c='widget',f='microblog.load', args='amigostl')}}','amigostl');
-setTimeout(actualiza_bloque,60000);
-}
-jQuery(document).ready(actualiza_bloque);
-</script>
 
 {{block left_sidebar}}
 {{=LOAD(c='widget',f='postlist.load',args=request.args,target='post_list',_class='ui-widget-content ui-corner-all')}}
@@ -16,26 +9,29 @@ jQuery(document).ready(actualiza_bloque);
 
 
 {{block right_sidebar}}
-{{include 'sidebar.html'}}
+    {{include 'sidebar.html'}}
 {{end #right_sidebar}}
 
+
+
+
 {{if auth.is_logged_in():}}
-{{=A('Postear',_href=URL(c='content',f='post'),_class='button primary pill')}}
-{{=A('Admin',_href=URL(c='gestor'),_class='negative button pill')}}
+    {{=A('Postear',_href=URL(c='post',f='add'),_class='button primary pill')}}
+    {{=A('Admin',_href=URL(c='gestor',f='index'),_class='negative button pill')}}
 {{pass}}
 
 {{=LOAD(c='widget',f='postlist.load',args=request.args,target='post_list',_class='ui-widget-content ui-corner-all')}}
 
 <div id="post" class='ui-widget ui-corner-all'>
 
-
 {{
+# ESTABLECE EL FRONTPAGE
 try:
-frontpage = db((db.block.place == db.place.id) &
-            (db.block.post == db.post.id) &
+frontpage = db((db.context.place == db.place.id) &
+            (db.context.post == db.post.id) &
             (db.post.is_active == True) &
-            (db.block.position == 0) &
-            (db.place.name == 'blog') 
+            (db.context.priority == 0) &
+            (db.place.name == 'blogpost') 
             ).select(
             db.post.body,
             db.post.markup,

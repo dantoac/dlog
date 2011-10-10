@@ -5,7 +5,6 @@ a:hover {color:#204a87;}
 
 #paginar, #paginar a {
     text-decoration:none;
-    font-weight:bold;
     text-align:center;
 }
 
@@ -23,11 +22,11 @@ a:hover {color:#204a87;}
 #post_list {
     margin:.5em auto;
 }
-/*
-#post_list a {
-    margin:0 .3em;
+
+#post_list li span {
+    font-weight:bold;
 }
-*/
+
 pre {
     background:#fea;
     border:1px solid #d3d7cf
@@ -60,9 +59,9 @@ ul li {
     list-style:none;
 }
 #post h1.title, #post h1.title  a{
-    text-align:center;
     text-decoration:none;  
     color:#3465a4;
+    
 }
 
 #right_sidebar .microblog {
@@ -104,4 +103,34 @@ ul li {
 
 .post_body img {
     max-width:100%;
+}
+
+#right_sidebar .block div.title{
+    font-weight:bold;
+    background:#3465a4; 
+    color:#fff;
+    border-radius:.6em;
+}
+
+
+.title {text-align:center;}
+
+.body{
+
+}
+
+.title a {color:#fff;}
+
+.updated {
+     font:.6em sans-serif;
+     text-transform:uppercase;
+     
+}
+
+.green_light_bg{
+    background:#8ae234;    
+}
+
+.yellow_light_bg{
+    background:#fce94f;
 }
