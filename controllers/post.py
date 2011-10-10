@@ -8,7 +8,6 @@ response.menu += menuadds.menudocs()
 response.menu += menuadds.menupags()
 
 
-
 def read():
     
 

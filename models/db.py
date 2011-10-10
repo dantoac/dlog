@@ -46,10 +46,13 @@ mail.settings.sender = 'you@gmail.com'
 mail.settings.login = 'username:password'
 
 ## configure auth policy
+
 auth.settings.registration_requires_verification = False
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
-auth.settings.login_after_registration = True
+auth.settings.login_after_registration = False
+
+
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.rpx_account import use_janrain
@@ -132,12 +135,9 @@ if db(db.markup).isempty():
 if db(db.place).isempty():
     db.place.bulk_insert([{'name':'blogpost'},
                           {'name':'sidebar'},
-                          {'name':'menu'},
                           {'name':'página'},
                           {'name':'documento'}
                           ])
-
-
 
 if request.is_local:
     from gluon.custom_import import track_changes
