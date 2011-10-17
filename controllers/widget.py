@@ -4,7 +4,7 @@
 def identica():
 
     from floscial import Floscial
-    user = 'danto'
+    user = 'dantoac'
     identica_contactos = Floscial(user,'friends',3).identica()
     identica_personal = Floscial(user,'user',3).identica()
 

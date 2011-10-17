@@ -7,8 +7,7 @@ cache = current.cache
 
 #@cache(request.env.path_info, time_expire = 300, cache_model = cache.ram)
 class Floscial():
-
-    
+   
     def __init__(self,user,tl,limit):
         self.user = user
         self.timeline = tl
@@ -25,7 +24,7 @@ class Floscial():
         
         if self.timeline == 'friends':
             identica_feed = 'friends_timeline'
-            link2src = A('Timeline Contactos', _href = 'http://identi.ca/danto/all', _class = 'title', _title = 'Timeline público de mi red de contactos')
+            link2src = A('Timeline Contactos', _href = 'http://identi.ca/%s/all' % identica_user, _class = 'title', _title = 'Timeline público de mi red de contactos')
         elif self.timeline == 'user':
             identica_feed = 'user_timeline'
             link2src = A('@' + identica_user, _href = 'http://identi.ca/' + identica_user, _class = 'title', _title = 'Mi microblog en identi.ca')

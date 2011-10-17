@@ -125,7 +125,7 @@ query_block_content = db((db.post.id>0) & (db.post.is_active == True) & (db.post
 db.block_content.content.requires=IS_IN_DB(query_block_content,'post.id','%(title)s')
 """
 
-auth.add_permission(1, 'delete', 'post')
+#auth.add_permission(1, 'delete', 'post')
 
 if db(db.markup).isempty():
     db.markup.bulk_insert([{'name':'markmin'},
