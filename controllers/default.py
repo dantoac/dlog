@@ -33,18 +33,18 @@ def index():
 
         for d in data:
             if d.context.priority==0:
-                if d.post.markup == 'markmin':
+                if d.post.markup.name == 'markmin':
                     frontpage = DIV(MARKMIN(d.post.body), _id='post', _class='ui-widget ui-corner-all')
-                elif d.post.markup == 'html':
+                elif d.post.markup.name == 'html':
                     frontpage = DIV(XML(d.post.body), _id='post', _class='ui-widget ui-corner-all')
                 else:
                     frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
                 break
 
             else:
-                if d.post.markup == 'markmin':
+                if d.post.markup.name == 'markmin':
                     frontpage = DIV(MARKMIN(d.post.body), _id='post', _class='ui-widget ui-corner-all')
-                elif d.post.markup == 'html':
+                elif d.post.markup.name == 'html':
                     frontpage = DIV(XML(d.post.body), _id='post', _class='ui-widget ui-corner-all')
                 else:
                     frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
