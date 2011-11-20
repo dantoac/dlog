@@ -17,10 +17,30 @@ response.menu += menuadds.menudocs()
 response.menu += menuadds.menupags()
 
 
-def index():   
-    return dict()
+def index():
 
+    try:
+        data = db((db.context.place == db.place.id)
+                & (db.context.post == db.post.id)
+                & (db.place.name == 'blogpost')
+                & (db.post.is_active == True)
+                ).select(
+                db.post.body,
+                db.post.markup,
+                db.context.priority
+                )
 
+        for d in data:
+            if d.context.priority==0:
+                frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
+                break
+            else:
+                frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
+
+    except Exception,e:
+        response.write(e)
+
+    return dict(frontpage=frontpage)
 
 def user():
 

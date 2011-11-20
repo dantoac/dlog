@@ -12,9 +12,6 @@
     {{include 'sidebar.html'}}
 {{end #right_sidebar}}
 
-
-
-
 {{if auth.is_logged_in():}}
     {{=A('Postear',_href=URL(c='post',f='add'),_class='button primary pill')}}
     {{=A('Admin',_href=URL(c='gestor',f='index'),_class='negative button pill')}}
@@ -22,29 +19,4 @@
 
 {{=LOAD(c='widget',f='postlist.load',args=request.args,target='post_list',_class='ui-widget-content ui-corner-all')}}
 
-<div id="post" class='ui-widget ui-corner-all'>
-
-{{
-# ESTABLECE EL FRONTPAGE
-try:
-frontpage = db((db.context.place == db.place.id) &
-            (db.context.post == db.post.id) &
-            (db.post.is_active == True) &
-            (db.context.priority == 0) &
-            (db.place.name == 'blogpost') 
-            ).select(
-            db.post.body,
-            db.post.markup,
-            orderby =~ db.post.modified_on
-            ).first()
-}}
-
-{{if frontpage['markup'].name == 'html':}}
-{{=XML(frontpage['body'])}}
-{{else:}}
-{{=MARKMIN(frontpage['body'])}}
-{{pass}}
-
-{{except:pass}}
-
-</div>
+{{=frontpage}}
