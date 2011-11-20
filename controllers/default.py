@@ -27,41 +27,24 @@ def index():
                 & (db.post.is_active == True)
                 ).select(
                 db.post.id,
-                db.post.title,
-                db.post.body,
                 db.post.slug,
-                db.post.markup,
                 db.context.priority,
                 cache=(cache.disk, 600)
-
                 )
 
 
         for d in data:
-            pid = d.post.id
-            slug = d.post.slug
-            titlepost = H1(A(d.post.title, _href = URL(c = 'post', f = 'read.html', args = [pid,slug])), _class = 'title ui-corner-all')
 
             if d.context.priority==0:
-                if d.post.markup.name == 'markmin':
-                    frontpage = DIV(CAT(titlepost,MARKMIN(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
-                elif d.post.markup.name == 'html':
-                    frontpage = DIV(CAT(titlepost,XML(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
-                else:
-                    frontpage = DIV(CAT(titlepost,d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                frontpage = LOAD(c='post',f='read.load',args=[d.post.id,d.post.slug],target='post')
                 break
 
             else:
-                if d.post.markup.name == 'markmin':
-                    frontpage = DIV(CAT(titlepost,MARKMIN(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
-                elif d.post.markup.name == 'html':
-                    frontpage = DIV(CAT(titlepost,XML(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
-                else:
-                    frontpage = DIV(CAT(titlepost,d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                frontpage = LOAD(c='post',f='read.load',args=[d.post.id,d.post.slug],target='post')
 
 
     except Exception,e:
-        frontpage = e
+        frontpage = 'frontpage error'
 
     return dict(frontpage=frontpage)
 
