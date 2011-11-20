@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 # this file is released under public domain and you can use without limitations
 
-#########################################################################
-## This is a samples controller
-## - index is the default action of any application
-## - user is required for authentication and authorization
-## - download is for downloading files uploaded in the db (does streaming)
-## - call exposes all registered services (none by default)
-#########################################################################
+if 0:
+    from gluon.dal import *
+    from gluon.html import *
+    from gluon.globals import *
+    session = Session
+    request = Request
+    response = Response
+    db = DAL
 
 response.files.insert(len(response.files), URL('static', 'css/last.css'))
 
@@ -32,10 +33,22 @@ def index():
 
         for d in data:
             if d.context.priority==0:
-                frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
+                if d.post.markup == 'markmin':
+                    frontpage = DIV(MARKMIN(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                elif d.post.markup == 'html':
+                    frontpage = DIV(XML(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                else:
+                    frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
                 break
+
             else:
-                frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
+                if d.post.markup == 'markmin':
+                    frontpage = DIV(MARKMIN(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                elif d.post.markup == 'html':
+                    frontpage = DIV(XML(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                else:
+                    frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
+
 
     except Exception,e:
         response.write(e)
