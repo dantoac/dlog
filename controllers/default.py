@@ -26,32 +26,42 @@ def index():
                 & (db.place.name == 'blogpost')
                 & (db.post.is_active == True)
                 ).select(
+                db.post.id,
+                db.post.title,
                 db.post.body,
+                db.post.slug,
                 db.post.markup,
-                db.context.priority
+                db.context.priority,
+                cache=(cache.disk, 600)
+
                 )
 
+
         for d in data:
+            pid = d.post.id
+            slug = d.post.slug
+            titlepost = H1(A(d.post.title, _href = URL(c = 'post', f = 'read.html', args = [pid,slug])), _class = 'title ui-corner-all')
+
             if d.context.priority==0:
                 if d.post.markup.name == 'markmin':
-                    frontpage = DIV(MARKMIN(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                    frontpage = DIV(CAT(titlepost,MARKMIN(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
                 elif d.post.markup.name == 'html':
-                    frontpage = DIV(XML(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                    frontpage = DIV(CAT(titlepost,XML(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
                 else:
-                    frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
+                    frontpage = DIV(CAT(titlepost,d.post.body), _id='post', _class='ui-widget ui-corner-all')
                 break
 
             else:
                 if d.post.markup.name == 'markmin':
-                    frontpage = DIV(MARKMIN(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                    frontpage = DIV(CAT(titlepost,MARKMIN(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
                 elif d.post.markup.name == 'html':
-                    frontpage = DIV(XML(d.post.body), _id='post', _class='ui-widget ui-corner-all')
+                    frontpage = DIV(CAT(titlepost,XML(d.post.body)), _id='post', _class='ui-widget ui-corner-all')
                 else:
-                    frontpage = DIV(d.post.body, _id='post', _class='ui-widget ui-corner-all')
+                    frontpage = DIV(CAT(titlepost,d.post.body), _id='post', _class='ui-widget ui-corner-all')
 
 
     except Exception,e:
-        response.write(e)
+        frontpage = e
 
     return dict(frontpage=frontpage)
 

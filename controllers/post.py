@@ -9,7 +9,7 @@ response.menu += menuadds.menupags()
 
 
 def read():
-    
+
 
     slug = request.args(1)
     pid = int(request.args(0))
@@ -60,7 +60,7 @@ def read():
                     MARKMIN(p.body, extra = markmin_extra),
                     _class = 'post_body'
                     )
-                
+
             elif p.markup.name == 'html':
                 post_content = DIV(
                     XML(p.body),
@@ -69,7 +69,7 @@ def read():
             elif p.markup.name == 'template':
                 import gluon.template
                 post_content = XML((gluon.template.render(p.body,context=globals())))
-                                   
+
 
         return dict(meta = post_meta, body = post_content, title = title, created_on = date, active = p.is_active)
     else:
