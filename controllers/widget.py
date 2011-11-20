@@ -68,8 +68,10 @@ def postlist():
             if p.modified_on != p.created_on:
                 posts_list[-1].append(SPAN(EM(' actualizado: %s' % p.modified_on.date()),_class='updated green_light_bg'))
 
-        posts_list.insert(0,DIV(TAG.STRONG('Publicaciones'),_class='title'))
-               
+        posts_list = CAT(DIV(TAG.STRONG('Publicaciones'),_class='title'),posts_list)
+
+
+
         return dict(posts_list = posts_list, paginar = paginar)
 
 
@@ -138,7 +140,7 @@ def upload():
         return response.json({'success':'true'})
     elif form.errors:
         response.flash = 'hubo errores'
-        
+
     return dict(upload=form)
     """
 
