@@ -17,6 +17,8 @@ menuadds = MenuContext(db)
 response.menu += menuadds.menudocs()
 response.menu += menuadds.menupags()
 
+response.title = 'dantoac'
+response.subtitle = 'be-log'
 
 def index():
 

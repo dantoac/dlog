@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-response.files.append(URL('static', 'css/last.css'))
+#response.files.append(URL('static', 'css/last.css'))
 
 def index():
     #table = LOAD(r=request,c='widget',f='postlist.load',ajax=False,target='gestor',_class='ui-widget-content ui-corner-all')

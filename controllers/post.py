@@ -31,9 +31,11 @@ def read():
 
     if len(post_data) > 0:
         for p in post_data:
-            response.title = p.title
-            title = H1(A(p.title, _href = URL(c = 'post', f = 'read.html', args = [pid,slug])), _class = 'title ui-corner-all')
             date = p.created_on
+            response.title = p.title
+            response.subtitle = date
+            title = H1(A(p.title, _href = URL(c = 'post', f = 'read.html', args = [pid,slug])), _class = 'title ui-corner-all')
+
 
             if p.is_active == False:
                 response.flash = 'Este post está actualmente desactivado.'
@@ -45,11 +47,11 @@ def read():
                 UL(
                     #LI(A('permalink ',_href=URL(f='read',args=[slug,pid],extension='html'),_class='meta_link')),
                     LI(A('permalink ', _href = p.xurl, extension = 'html', _class = 'meta_link')),
-                    LI(A('editar', _href= URL(c = 'gestor', f = 'index.html', args = ['post','edit','post',pid], user_signature=True), _class = 'metalink')),
+                    LI(A('editar', _href= URL(c = 'gestor', f = 'index.html', args = ['post','edit','post',pid], user_signature=True), _class = 'meta_link')),
                        #A('editar ', _href = URL(c='',f = 'post', args = ['edit', pid], extension = 'html'), _class = 'meta_link')),
                     #LI(A('dent ',_href='http://identi.ca/index.php?action=newnotice&status_textarea=%s' % dentmsg,_class='meta_link',_taget='_new'),_class='dent'),
                     _class = 'sf-menu der'),
-                SPAN(date, _class = 'izq'),
+                #SPAN(date, _class = 'izq'),
                 _class = 'post_meta')
 
             #revisa el tipo de marcado del post

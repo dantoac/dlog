@@ -2,12 +2,13 @@
 
 from gluon import *
 
-request = current.request
-cache = current.cache
 
 #@cache(request.env.path_info, time_expire = 300, cache_model = cache.ram)
 class Floscial():
-   
+
+    request = current.request
+    cache = current.cache
+       
     def __init__(self,user,tl,limit):
         self.user = user
         self.timeline = tl
@@ -34,7 +35,7 @@ class Floscial():
         feed = feedparser.parse(urlfeed)
         identica = DIV(link2src, _class = 'microblog')
             
-        dents = UL(_id = 'dents')
+        dents = UL(_class = 'dents')
             
         for dent in feed.entries:
             if limite == self.limit:
