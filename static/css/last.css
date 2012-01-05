@@ -54,6 +54,7 @@ pre {
 .meta_link {
     background:#eeeeec;
 }
+
 /*
 ul li {
     list-style:none;
@@ -63,7 +64,6 @@ ul li {
     color:#3465a4;
     
 }
-
 */
 
 .identica  .dents {
@@ -86,15 +86,12 @@ ul li {
     text-decoration:none;
     border:1px solid #c00;
 }
+
 /*
 #footer, #footer a, #footer img {
     font-size:x-small;
     vertical-align:middle;
     text-decoration:none;
-}
-
-.post_body img {
-    max-width:100%;
 }
 
 #right_sidebar .block div.title{
@@ -117,6 +114,10 @@ ul li {
      font:.6em sans-serif;
      text-transform:uppercase;
      
+}
+
+.post_body img {
+    max-width:100%;
 }
 
 .green_light_bg{
