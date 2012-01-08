@@ -22,21 +22,21 @@ response.subtitle = 'be-log'
 
 def index():
 
-    try:
-        data = db((db.context.place == db.place.id)
-                & (db.context.post == db.post.id)
-                & (db.place.name == 'blogpost')
-                & (db.post.is_active == True)
-                ).select(
-                db.post.id,
-                db.post.slug,
-                db.context.priority,
-                cache=(cache.disk, 600)
-                )
+    data = db((db.context.place == db.place.id)
+            & (db.context.post == db.post.id)
+            & (db.place.name == 'blogpost')
+            & (db.post.is_active == True)
+            ).select(
+            db.post.id,
+            db.post.slug,
+            db.context.priority,
+            #cache=(cache.disk, 600)
+            )
 
+    if len(data) != 0:
 
         for d in data:
-
+    
             if d.context.priority==0:
                 frontpage = LOAD(c='post',f='read.load',args=[d.post.id,d.post.slug],target='post')
                 break
@@ -44,9 +44,8 @@ def index():
             else:
                 frontpage = LOAD(c='post',f='read.load',args=[d.post.id,d.post.slug],target='post')
 
-
-    except Exception,e:
-        frontpage = 'frontpage error'
+    else:
+        frontpage = ""
 
     return dict(frontpage=frontpage)
 
