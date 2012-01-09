@@ -24,26 +24,21 @@ def index():
 
     data = db((db.context.place == db.place.id)
             & (db.context.post == db.post.id)
+            & (db.context.priority < 1)
             & (db.place.name == 'blogpost')
             & (db.post.is_active == True)
             ).select(
             db.post.id,
             db.post.slug,
-            db.context.priority,
             #cache=(cache.disk, 600)
             )
 
+    frontpage = DIV(_id='post')
+    
     if len(data) != 0:
 
-        for d in data:
-    
-            if d.context.priority==0:
-                frontpage = LOAD(c='post',f='read.load',args=[d.post.id,d.post.slug],target='post')
-                break
-
-            else:
-                frontpage = LOAD(c='post',f='read.load',args=[d.post.id,d.post.slug],target='post')
-
+        for p in data:
+            frontpage.append(LOAD(c='post',f='read.load',args=[p.id,p.slug],target=p.slug, ajax=True))
     else:
         frontpage = ""
 
