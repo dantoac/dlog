@@ -24,7 +24,7 @@ def index():
 
     data = db((db.context.place == db.place.id)
             & (db.context.post == db.post.id)
-            & (db.place.name == 'blogpost')
+            & (db.place.name == 'blog')
             & (db.post.is_active == True)
             ).select(
             db.post.id,

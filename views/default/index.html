@@ -17,6 +17,6 @@
     {{=A('Admin',_href=URL(c='gestor',f='index'),_class='negative button pill')}}
 {{pass}}
 
-{{=LOAD(c='widget',f='postlist.load',args=request.args,target='post_list',_class='ui-widget-content ui-corner-all')}}
+{{=LOAD(c='widget',f='postlist.load',args=request.args,ajax=True,target='post_list',_class='ui-widget-content ui-corner-all',user_signature=True)}}
 
 {{=frontpage}}

@@ -15,7 +15,7 @@ def identica():
 #@cache(request.env.path_info, time_expire=3600, cache_model=cache.ram)
 def postlist():
     #chk que sea una llamada ajax
-    if request.cid: #
+    if request.ajax: #
 
         if request.vars.pag:
             page = int(request.vars.pag)
@@ -30,7 +30,7 @@ def postlist():
             (db.context.place == db.place.id) &
             (db.context.post == db.post.id) &
             (db.post.is_active == True) &
-            (db.place.name == 'blogpost') &
+            (db.place.name == 'blog') &
             (db.context.priority > 0)
             ).select(
             db.post.title,
@@ -46,7 +46,7 @@ def postlist():
 
         #paginador
         paginar = DIV(_id = 'paginar')
-
+        
         if page:
             paginar.append(A('← recientes', _href = URL(r = request, vars = {'pag':page - 1}), cid = request.cid))
             paginar.append(' | ')
