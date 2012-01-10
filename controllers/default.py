@@ -17,29 +17,33 @@ menuadds = MenuContext(db)
 response.menu += menuadds.menudocs()
 response.menu += menuadds.menupags()
 
-response.title = 'dantoac'
-response.subtitle = 'be-log'
+response.title = ''
+response.subtitle = ''
 
 def index():
 
     data = db((db.context.place == db.place.id)
             & (db.context.post == db.post.id)
-            & (db.context.priority < 1)
             & (db.place.name == 'blogpost')
             & (db.post.is_active == True)
             ).select(
             db.post.id,
             db.post.slug,
-            #cache=(cache.disk, 600)
+            db.context.priority,
+            orderby=~db.post.id
             )
 
     frontpage = DIV(_id='post')
     
     if len(data) != 0:
-
         for p in data:
-            frontpage.append(LOAD(c='post',f='read.load',args=[p.id,p.slug],target=p.slug, ajax=True))
-
+            if p.context.priority<1:
+                frontpage.append(LOAD(c='post',f='read.load',args=[p.post.id,p.post.slug],target=p.post.slug, ajax=True))
+            else:
+                frontpage.append(LOAD(c='post',f='read.load',args=[p.post.id,p.post.slug],target=p.post.slug, ajax=True))
+                break
+    else:
+        frontpage.append('blØg')
     return dict(frontpage=frontpage)
 
 def user():

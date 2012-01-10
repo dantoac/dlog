@@ -10,7 +10,6 @@ response.menu += menuadds.menupags()
 
 def read():
 
-
     slug = request.args(1)
     pid = int(request.args(0))
     post_data = db(db.post.id == pid).select(
@@ -70,7 +69,12 @@ def read():
                     )
             elif p.markup.name == 'template':
                 import gluon.template
-                post_content = XML((gluon.template.render(p.body,context=globals())))
+                try:
+                    post_content = XML((gluon.template.render(p.body,context=globals())))
+                except:
+                    post_content = 'asdf'
+
+
 
 
         return dict(meta = post_meta, body = post_content, title = title, created_on = date, active = p.is_active)

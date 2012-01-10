@@ -22,12 +22,12 @@ jQuery(document).ready(actualiza_bloque);
             )
 }}
 
-<div id="sidebar">
+
 {{=LOAD(c='widget',f='identica.load', ajax=True, content=A('Cargando identi.ca...',_href='http://identi.ca/'),_class='block identica',target='widget_identica')}}
 
 
 {{for d in data:}}
-{{"""}}
+
     {{if d.markup.name == 'html':}}
         {{=DIV(DIV(XML(d.title),_class='title'),DIV(XML(d.body),_class='body'),_class='block')}}
 
@@ -39,8 +39,5 @@ jQuery(document).ready(actualiza_bloque);
         {{=DIV(DIV(MARKMIN(d.title),_class='title'),DIV(MARKMIN(d.body),_class='body'),_class='block')}}
 
     {{pass}}
-{{pass"""}}
-
-{{=LOAD(c='post',f='read.load',args=d.id,ajax=False,target='block-'+str(d.slug))}}
 {{pass}}
-</div>
+{{pass}}

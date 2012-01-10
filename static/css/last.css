@@ -33,11 +33,19 @@ pre {
     border-radius:.6em;
 }
 */
+#post {
+    overflow:auto;
+}
 
 .post_body {
     overflow:hidden;
     clear:both;
     padding:1em;
+}
+
+
+.post_body img {
+    max-width:100%;
 }
 
 .post_meta {
@@ -116,10 +124,6 @@ ul li {
      
 }
 
-.post_body img {
-    max-width:100%;
-}
-
 .green_light_bg{
     background:#8ae234;    
 }
@@ -130,3 +134,11 @@ ul li {
 
 .izq {float:left !important;}
 .der {float:right !important;}
+
+#sidebar h1.title {
+    font-size:1em;
+    line-height:1em;
+    text-align:center;
+    background:#9cf;
+    padding:.6em;
+}
