@@ -39,8 +39,6 @@ def index():
 
         for p in data:
             frontpage.append(LOAD(c='post',f='read.load',args=[p.id,p.slug],target=p.slug, ajax=True))
-    else:
-        frontpage = ""
 
     return dict(frontpage=frontpage)
 
