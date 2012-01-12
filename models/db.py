@@ -17,14 +17,22 @@
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+if 0:
+    from gluon import *
+    from gluon.tools import Auth
+    session = current.session
+    request = current.request
+    response = current.response
+    T = current.T
+    auth = Auth
+    db = DAL
 
 table = db.define_table
 
-import uuid
-
 table('place',
-      Field('name'), #ejemplo: sidebar, header, etc
-      format = '%(name)s'
+      Field('name'),
+          #ejemplo: sidebar, header, etc
+      format='%(name)s'
       )
 
 table('markup',

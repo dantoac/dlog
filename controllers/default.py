@@ -20,6 +20,7 @@ response.menu += menuadds.menupags()
 response.title = ''
 response.subtitle = ''
 
+
 def index():
 
     data = db((db.context.place == db.place.id)
@@ -34,23 +35,28 @@ def index():
             )
 
     frontpage = DIV(_id='post')
-    
+
     if len(data) != 0:
         for p in data:
-            if p.context.priority<1:
-                frontpage.append(LOAD(c='post',f='read.load',args=[p.post.id,p.post.slug],target=p.post.slug, ajax=True))
+            if p.context.priority < 1:
+                frontpage.append(LOAD(c='post', f='read.load',
+                    args=[p.post.id, p.post.slug],
+                    target=p.post.slug, ajax=True))
             else:
-                frontpage.append(LOAD(c='post',f='read.load',args=[p.post.id,p.post.slug],target=p.post.slug, ajax=True))
+                frontpage.append(LOAD(c='post', f='read.load',
+                    args=[p.post.id, p.post.slug],
+                         target=p.post.slug, ajax=True))
                 break
     else:
         frontpage.append('blØg')
     return dict(frontpage=frontpage)
 
+
 def user():
 
     """
     exposes:
-      http://..../[app]/default/user/login
+e      http://..../[app]/default/user/login
     http://..../[app]/default/user/logout
     http://..../[app]/default/user/register
     http://..../[app]/default/user/profile
@@ -61,7 +67,7 @@ def user():
         @auth.requires_permission('read','table name',record_id)
     to decorate functions that need access control
     """
-    return dict(form = auth())
+    return dict(form=auth())
 
 
 def download():
@@ -97,5 +103,4 @@ def data():
     or with the signed load operator
       LOAD('default','data.load',args='tables',ajax=True,user_signature=True)
     """
-    return dict(form = crud())
-
+    return dict(form=crud())
