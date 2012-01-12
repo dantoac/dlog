@@ -44,7 +44,44 @@ def index():
                 break
     else:
         frontpage.append('blØg')
-    return dict(frontpage=frontpage)
+        
+    sidebar_right = sidebar()
+    return dict(frontpage=frontpage,sidebar = sidebar_right)
+
+
+def sidebar(side='right'):
+    
+    data = db(
+            (db.context.place == db.place.id) &
+            (db.context.post == db.post.id) &
+            (db.place.name == 'sidebar')
+            ).select(
+            db.post.title,
+            db.post.body,
+            db.post.slug,
+            db.post.id,
+            db.post.markup,
+            db.post.created_on,
+            orderby = db.context.priority
+            )
+
+    sidebar = DIV(_id='sidebar_'+side)
+    
+    if side=='right':
+        for d in data:
+            sidebar.append(LOAD(c='post',f='read.load',args=d.id,ajax=True,target='block-'+str(d.slug)))
+            
+    sidebar.append(SCRIPT("""
+    function actualiza_bloque() {
+web2py_component('{{=URL(c='widget',f='identica.load')}}','widget_identica');
+setTimeout(actualiza_bloque,60000);
+}
+jQuery(document).ready(actualiza_bloque);
+"""))
+            
+    return sidebar
+
+
 
 def user():
 
