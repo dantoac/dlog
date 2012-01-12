@@ -74,7 +74,7 @@ def sidebar(side='right'):
     
     if side=='right':
         
-        sidebar.append(LOAD(c='widget',f='identica.load',target='widget_identica'))
+        sidebar.append(LOAD(c='widget',f='identica.load',target='widget_identica', _class='block identica'))
         
         for d in data:
             sidebar.append(LOAD(c='post',f='read.load',args=d.id,ajax=True,target='block-'+str(d.slug)))
