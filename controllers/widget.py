@@ -1,122 +1,87 @@
 # -*- coding: utf-8 -*-
 
-@cache(request.env.path_info, time_expire = 200, cache_model = cache.ram)
+@cache(request.env.path_info, time_expire = 300, cache_model = cache.ram)
 def identica():
-
     from floscial import Floscial
-    user = 'dantoac'
-    identica_contactos = Floscial(user,'friends',3).identica()
-    identica_personal = Floscial(user,'user',3).identica()
+    identica_contactos = Floscial('dantoac','friends',3).identica()
+    identica_personal = Floscial('dantoac','user',3).identica()
 
     d =  dict(friends = identica_contactos, personal = identica_personal)
     return response.render(d)
 
 
-#@cache(request.env.path_info, time_expire=3600, cache_model=cache.ram)
 def postlist():
-    #chk que sea una llamada ajax
-    if request.ajax: #
+    if request.vars.pag:
+        page = int(request.vars.pag)
+    else:
+        page = 0
 
-        if request.vars.pag:
-            page = int(request.vars.pag)
-        else:
-            page = 0
+    items_per_page = 3
+    limitby = (page * items_per_page, (page + 1) * items_per_page + 1)
 
-
-        items_per_page = 3
-        limitby = (page * items_per_page, (page + 1) * items_per_page + 1)
-
-        data = db(
-            (db.context.place == db.place.id) &
-            (db.context.post == db.post.id) &
-            (db.post.is_active == True) &
-            (db.place.name == 'blog') &
-            (db.context.priority > 0)
-            ).select(
+    data = db(
+        (db.context.place == db.place.id) &
+        (db.context.post == db.post.id) &
+        (db.post.is_active == True) &
+        (db.place.name == 'blog') &
+        (db.context.priority > 0)
+        ).select(
             db.post.title,
             db.post.slug,
             db.post.id,
             db.post.created_on,
             db.post.modified_on,
             orderby =~ db.post.created_on,
-            limitby = limitby
+            limitby = limitby,
             )
 
-        posts_list = UL()
+    posts_list = UL()
 
-        #paginador
-        paginar = DIV(_id = 'paginar')
-        
-        if page:
-            paginar.append(A('← recientes', _href = URL(r = request, vars = {'pag':page - 1}), cid = request.cid))
-            paginar.append(' | ')
+    total_posts = db((db.post.id == db.context.post) &
+                     (db.post.is_active == True) &
+                     (db.context.place == db.place.id) &
+                     (db.place.name == 'blog')
+                     ).select(db.post.id.count())[0][db.post.id.count()]-1
 
-        if len(data) > items_per_page:
-            paginar.append(A('antiguos →', _href = URL(r = request, vars = {'pag':page + 1}), cid = request.cid))
-        #/paginador
+    if not total_posts > 0:
+        total_posts = 0
+    
+    #paginador
+    paginar = DIV(_id = 'paginar')
 
+    if page:
+        paginar.append(A('← Recientes', _href = URL(r = request, vars = {'pag':page - 1}), cid = request.cid, _class=''))
+        paginar.append(' | ')
 
-        #
-        for n, p in enumerate(data):
-            if n == items_per_page: break
-            posts_list.append(LI(SPAN(p.created_on.date(), _class = 'created_on'), A(' ' + p.title, _href = URL(c = 'post', f = 'read.load', args = [p.id, p.slug]), cid = 'post')))
-
-            # agregamos un botón de 'edición rápida' si es que el usuario está autentificado
-            if auth.is_logged_in():
-                posts_list[-1].append(SPAN(A('editar', _href= URL(c = 'gestor', f = 'index.html', args = ['post','edit','post',p.id], user_signature=True), _class = 'ui-button ui-icon ui-icon-pencil')))
-
-            if p.modified_on != p.created_on:
-                posts_list[-1].append(SPAN(EM(' actualizado: %s' % p.modified_on.date()),_class='updated green_light_bg'))
-
-        posts_list = CAT(DIV(TAG.STRONG('Publicaciones'),_class='title'),posts_list)
+    if len(data) > items_per_page:
+        paginar.append(A('Antiguos →', _href = URL(r = request, vars = {'pag':page + 1}), cid = request.cid, _class=''))
+    #/paginador
 
 
+    #
+    for n, p in enumerate(data):
+        if n == items_per_page: break
+        # agregamos un botón de 'edición rápida' si es que el usuario está autentificado
+        if auth.is_logged_in():
+            edit_button = SPAN(A('editar', _href= URL(c = 'gestor', f = 'index.html', 
+                                                      args = ['post','edit','post',p.id], 
+                                                      user_signature=True), 
+                                                      _class = 'ui-button ui-icon ui-icon-pencil'))
+        else: edit_button = ''
 
-        return dict(posts_list = posts_list, paginar = paginar)
+        if p.id == db(db.post).select(db.post.id).last()['id']: continue
 
+        # crea el link para cargar el post usando ajax
+        posts_list.append(LI(
+        SPAN(p.created_on.date(), _class = 'created_on'), 
+        #A(' ' + p.title, _href = URL(c = 'post', f = 'read.load', args = [p.id, p.slug]), cid = 'post'), 
+        A(' '+p.title, _href="#post",
+          _onmouseup = 'web2py_component("%s","post");return false;' % URL('post','read.load', args=p.id)),
+          edit_button))
+      
+    posts_list = CAT(DIV(TAG.STRONG('Publicaciones anteriores: ',EM(total_posts)),_class='title'),posts_list)
 
-
-
-### UPLOADER
-def uploader():
-    uploader = """
-
-                <div id='uploader'></div>
-
-                <script>
-                $(document).ready(function(){
-                        var uploader = new qq.FileUploader({
-                        element: document.getElementById('uploader'),
-                        action: '%(uploader_url)s',
-                        multiple: false,
-                        debug: false,
-                        allowedExtensions: %(extensiones_permitidas)s,
-                        template: '<div class=\"qq-uploader\">' +
-                                '<div class=\"qq-upload-drop-area\"><span>Arrastra los videos aquí para cargarlos</span></div>' +
-                                '<a class=\"qq-upload-button big positive primary button \"><span class=\"icon uparrow\"></span>Cargar un Fichero</a>' +
-                                '<ul class=\"qq-upload-list\"></ul>' +
-                             '</div>',
-                        fileTemplate: '<li>' +
-                                    '<span class=\"qq-upload-file\"></span>' +
-                                    '<span class=\"qq-upload-spinner\"></span>' +
-                                    '<span class=\"qq-upload-size\"></span>' +
-                                    '<a class=\"qq-upload-cancel\ negative button\" href=\"#\">ANULAR</a>' +
-                                    '<div class=\"qq-upload-failed-text error \">ha fallado.</div>' +
-                                    '</li>',
-                            messages:{
-                            typeError: '{file} es un archivo inválido. Sólo se permiten los archivos {extensions}',
-                            onLeave: 'Hay videos cargándose. Si te vas ahora se anulará la carga, aunque podrás repetirla.'
-                            },
-                        //onComplete: function(){window.location.reload()},
-                        onComplete: function(){jQuery(\".flash\").html(\"Ha finalizado la carga de un video.\").slideDown()}
-
-                        });
-
-                    });
-
-                </script>
-                """ % dict(extensiones_permitidas = EXTENSIONES_PERMITIDAS.split('|'), uploader_url = URL(c = 'widget', f = 'upload'))
-    return dict(uploader = XML(uploader))
+    return dict(posts_list = posts_list, paginar = paginar)
 
 
 def upload():

@@ -1,22 +1,14 @@
 {{right_sidebar_enabled=True}}
+
 {{extend 'layout.html'}}
+
+{{block right_sidebar}}
+{{=LOAD(c='default',f='sidebar',args='right', ajax=False)}}
+{{end}}
 
 {{#http://ompldr.org/vYWJhOA/identica16x16.png}}
 
-{{block left_sidebar}}
-{{=LOAD(c='widget',f='postlist.load',args=request.args,target='post_list',_class='ui-widget  ui-corner-all')}}
-{{end}}
+{{=LOAD(c='widget',f='postlist.load',args=request.args,ajax=False,target='post_list',_class='ui-widget-content ui-corner-all',user_signature=True,content='Cargando listado...')}}
 
+{{=posts}}
 
-{{block right_sidebar}}
-{{=sidebar}}
-{{end #right_sidebar}}
-
-{{if auth.is_logged_in():}}
-    {{=A('Postear',_href=URL(c='post',f='add'),_class='button primary pill')}}
-    {{=A('Admin',_href=URL(c='gestor',f='index'),_class='negative button pill')}}
-{{pass}}
-
-{{=LOAD(c='widget',f='postlist.load',args=request.args,ajax=True,target='post_list',_class='ui-widget-content ui-corner-all',user_signature=True)}}
-
-{{=frontpage}}

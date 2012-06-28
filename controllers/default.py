@@ -20,9 +20,8 @@ response.menu += menuadds.menupags()
 response.title = ''
 response.subtitle = ''
 
-
 def index():
-
+    response.title = 'Portada'
     data = db((db.context.place == db.place.id)
             & (db.context.post == db.post.id)
             & (db.place.name == 'blog')
@@ -34,28 +33,108 @@ def index():
             orderby=~db.post.id
             )
 
-    frontpage = DIV(_id='post')
-
+    post = DIV(_id='post')
+    frontpage = CAT()
+    blogpost = CAT()
+    
+    count = 0
     if len(data) != 0:
         for p in data:
+            count += 1
             if p.context.priority < 1:
                 frontpage.append(LOAD(c='post', f='read.load',
                     args=[p.post.id, p.post.slug],
-                    target=p.post.slug, ajax=True))
+                    target=p.post.slug, ajax=False))
+                
             else:
-                frontpage.append(LOAD(c='post', f='read.load',
+                blogpost.append(LOAD(c='post', f='read.load',
                     args=[p.post.id, p.post.slug],
-                         target=p.post.slug, ajax=True))
-                break
+                         target=p.post.slug, ajax=False))
+            
     else:
-        frontpage.append('blØg')
+        frontpage.append(EM('<No hay publicaciones en este momento.>'))
+        
+    if len(frontpage)>0:
+        post.append(frontpage)
+    else:
+        post.append(blogpost[0])
         
     sidebar_right = sidebar()
-    return dict(frontpage=frontpage,sidebar = sidebar_right)
-
-
-def sidebar(side='right'):
     
+    return dict(posts=post,sidebar = sidebar_right)
+
+
+# def index():
+
+#     data = db((db.context.place == db.place.id)
+#             & (db.context.post == db.post.id)
+#             & (db.place.name == 'blog')
+#             & (db.post.is_active == True)
+#             ).select(
+#             db.post.id,
+#             db.post.slug,
+#             db.context.priority,
+#             orderby=~db.post.id
+#             )
+
+#     frontpage = DIV(_id='post')
+
+#     if len(data) != 0:
+#         for p in data:
+#             if p.context.priority < 1:
+#                 frontpage.append(LOAD(c='post', f='read.load',
+#                     args=[p.post.id, p.post.slug],
+#                     target=p.post.slug, ajax=True))
+#             else:
+#                 frontpage.append(LOAD(c='post', f='read.load',
+#                     args=[p.post.id, p.post.slug],
+#                          target=p.post.slug, ajax=True))
+#                 break
+#     else:
+#         frontpage.append('blØg')
+        
+#     sidebar_right = sidebar()
+#     return dict(frontpage=frontpage,sidebar = sidebar_right)
+
+
+# def sidebar(side='right'):
+    
+#     data = db(
+#             (db.context.place == db.place.id) &
+#             (db.context.post == db.post.id) &
+#             (db.place.name == 'sidebar')
+#             ).select(
+#             db.post.title,
+#             db.post.body,
+#             db.post.slug,
+#             db.post.id,
+#             db.post.markup,
+#             db.post.created_on,
+#             orderby = db.context.priority
+#             )
+
+#     sidebar = DIV(_id='sidebar_'+side)
+    
+#     if side=='right':
+        
+#         sidebar.append(LOAD(c='widget',f='identica.load',target='widget_identica', _class='block identica'))
+        
+#         for d in data:
+#             sidebar.append(LOAD(c='post',f='read.load',args=d.id,ajax=True,target='block-'+str(d.slug)))
+            
+#     sidebar.append(SCRIPT("""
+#     function actualiza_bloque() {
+# web2py_component('{{=URL(c='widget',f='identica.load')}}','widget_identica');
+# setTimeout(actualiza_bloque,60000);
+# }
+# jQuery(document).ready(actualiza_bloque);
+# """))
+            
+#     return sidebar
+
+
+def sidebar():
+    side = str(request.args(0))
     data = db(
             (db.context.place == db.place.id) &
             (db.context.post == db.post.id) &
@@ -70,14 +149,14 @@ def sidebar(side='right'):
             orderby = db.context.priority
             )
 
-    sidebar = DIV(_id='sidebar_'+side)
+    sidebar = DIV(_id='sidebar_'+side, _class='sidebar')
     
     if side=='right':
         
         sidebar.append(LOAD(c='widget',f='identica.load',target='widget_identica', _class='block identica'))
         
         for d in data:
-            sidebar.append(LOAD(c='post',f='read.load',args=d.id,ajax=True,target='block-'+str(d.slug)))
+            sidebar.append(LOAD(c='post',f='read.load',args=d.id,ajax=False,target='block-'+str(d.slug),content='Cargando contenido...'))
             
     sidebar.append(SCRIPT("""
     function actualiza_bloque() {
@@ -88,7 +167,6 @@ jQuery(document).ready(actualiza_bloque);
 """))
             
     return sidebar
-
 
 
 
